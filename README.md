@@ -49,3 +49,13 @@ Notion Clone Project는 Vanilla JS 를 사용하여 SPA로 구현된 프로젝�
   │   ├──
   └── main.js
 ```
+
+## ✅ 실행 방법
+
+```bash
+git clone
+
+npm install
+
+node ./server/server.js
+```
