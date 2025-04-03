@@ -1,0 +1,35 @@
+.sideBar {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: #263747;
+}
+.sideBar .search {
+    height: 30px;
+    padding-left: 30px;
+    background: url("../images/icon_search.png") left center / 35px 35px no-repeat;
+}
+.sideBar .footer {
+    position: absolute;
+    padding: 5px;
+    width: 100%;
+    bottom: 0;
+    border-top: 1px solid #0C151C;
+}
+.sideBar .footer .addPage {
+    width: 100%;
+    height: 30px;
+    text-align: left;
+    padding-left: 40px;
+    background: url("../images/icon_add.png") left center / 35px 35px no-repeat;
+}
+.sideBar .footer .addPage:hover {
+    background-color: #ffffff30;
+    border-radius: 5px;
+}
+.sideBar .footer .info {
+    float: right;
+    width: 35px;
+    height: 35px;
+    background: url("../images/icon_help.png") center / cover;
+}
