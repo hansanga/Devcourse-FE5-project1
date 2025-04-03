@@ -48,64 +48,6 @@ export default function Sidebar({ $app, initialState }) {
     }
   });
 
-  // const template = () => `
-  //    <div class="sideBar">
-  //       <div class="header">
-  //           <div class="profile">
-  //               <img class="picture">
-  //               <div class="name">Devcourse</div>
-  //               <div class="description">FE5 1차 팀프로젝트</div>
-  //           </div>
-  //           <button class="setting"></button>
-  //       </div>
-  //       <form class="search">
-  //           <img>
-  //           <input type="text" placeholder="검색">
-  //       </form>
-  //       <div class="documents">
-  //           <ul></ul> 
-  //       </div>
-  //       <div class="footer">
-  //           <button class="addPage"><img>페이지 추가</button>
-  //           <div class="info">
-  //                   <div class="none">
-  //                       2025.04.03 ~ 2025.04.04 / Team 1 <br>
-  //                       강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
-  //                   </div>
-  //               </div>
-  //       </div>
-  //    </div>
-
-  //       <div class="sideBar">
-  //           <div class="header">
-  //               <div class="profile">
-  //                   <img class="picture" src="./images/profile.png" />
-  //                   <div class="name">Devcourse</div>
-  //                   <div class="description">FE5 1차 팀프로젝트</div>
-  //               </div>
-  //               <button class="setting"></button>
-  //           </div>
-
-  //           <form class="search">
-  //               <input type="text" placeholder="검색">
-  //           </form>
-
-  //           <div class="documents">
-  //               <ul></ul>
-  //           </div>
-
-  //           <div class="footer">
-  //               <button class="addPage">페이지 추가</button>
-  //               <div class="info">
-  //                   <div class="none">
-  //                       2025.04.03 ~ 2025.04.04 / Team 1 <br>
-  //                       강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
-  //                   </div>
-  //               </div>
-  //           </div>
-  //       </div>
-  // `;
-
   // 페이지 생성
   const fetchData = async () => {
     try {
