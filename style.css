@@ -57,3 +57,10 @@
 [contenteditable="true"]:focus-visible {
   outline: none;
 }
+/* .checkListItem {
+  display: flex;
+  width: 100%;
+} */
+.checkListItem div {
+  width: 100%;
+}

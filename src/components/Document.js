@@ -25,9 +25,14 @@ export default function Document({
         </div>
         <div id="block-menu" class="hidden">
           <div data-type="text">텍스트</div>
-          <div data-type="heading">제목</div>
-          <div data-type="list">리스트</div>
-          <div data-type="code">코드블록</div>
+          <div data-type="heading1">제목1</div>
+          <div data-type="heading2">제목2</div>
+          <div data-type="heading3">제목3</div>
+          <div data-type="list">글머리 기호 목록</div>
+          <div data-type="numberList">숫자 목록</div>
+          <div data-type="checkList">체크박스 목록</div>
+          <div data-type="horizontalRule">구분선</div>
+          <div data-type="pageLink">페이지 링크</div>
         </div>
     `;
     return temp;
@@ -61,12 +66,19 @@ export default function Document({
       const type = e.target.dataset.type;
       if (!type) return;
 
-      let block;
-      let li;
+      let block, li, checkbox, checkText;
       switch (type) {
-        case "heading":
+        case "heading1":
           block = document.createElement("h1");
-          block.innerHTML = "제목";
+          block.innerHTML = "제목1";
+          break;
+        case "heading2":
+          block = document.createElement("h2");
+          block.innerHTML = "제목2";
+          break;
+        case "heading3":
+          block = document.createElement("h3");
+          block.innerHTML = "제목3";
           break;
         case "list":
           block = document.createElement("ul");
@@ -77,19 +89,55 @@ export default function Document({
 
           block.appendChild(li);
           break;
-        case "code":
-          block = document.createElement("pre");
-          block.innerHTML = "<code>// 코드 작성</code>";
+        case "numberList":
+          block = document.createElement("ol");
+          li = document.createElement("li");
+          li.className = "documentContent";
+          li.contentEditable = true;
+          li.textContent = "리스트";
+          block.appendChild(li);
+          break;
+        case "checkList":
+          block = document.createElement("div");
+          block.className = "checkListItem";
+
+          checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+
+          checkText = document.createElement("div");
+          checkText.className = "documentContent";
+          checkText.contentEditable = true;
+
+          block.appendChild(checkbox);
+          block.appendChild(checkText);
+          break;
+        case "horizontalRule":
+          block = document.createElement("hr");
+          break;
+        case "pageLink":
+          block = document.createElement("a");
+          block.href = "#";
+          block.textContent = "페이지 링크";
           break;
         default:
           block = document.createElement("div");
           break;
       }
-      block.className = "documentContent";
-      if (!li) block.contentEditable = true;
+      block.classList.add("documentContent");
+      if (
+        !li &&
+        type !== "checkList" &&
+        type !== "pageLink" &&
+        type !== "horizontalRule"
+      )
+        block.contentEditable = true;
 
       content.appendChild(block);
-      block.focus();
+      if (type === "horizontalRule") {
+        block.style.border = "none";
+      } else if (type === "checkList") {
+        checkText.focus();
+      } else focusAtEnd(block);
     });
 
     title.addEventListener("keydown", (e) => {
@@ -126,22 +174,105 @@ export default function Document({
 
     content.addEventListener("keydown", (e) => {
       const target = e.target;
-      if (target.innerText.trim() === "" && e.key === "Backspace") {
+      // 방향키 위 아래 처리
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = target.previousElementSibling;
+        if (prev) {
+          focusAtEnd(prev);
+        } else focusAtEnd(title);
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = target.nextElementSibling;
+        if (next) {
+          focusAtEnd(next);
+        } else focusAtEnd(title);
+        return;
+      }
+
+      // 체크박스 블록에서 Backspace 처리
+      if (
+        target.classList.contains("documentContent") &&
+        target.parentElement.classList.contains("checkListItem") &&
+        target.innerText.trim() === "" &&
+        e.key === "Backspace"
+      ) {
+        e.preventDefault();
+        const wrapper = target.parentElement;
+        const prev =
+          wrapper.previousElementSibling?.querySelector(".documentContent") ||
+          title;
+        wrapper.remove();
+        focusAtEnd(prev);
+        return;
+      }
+
+      // 일반 블록에서 Backspace 처리
+      if (
+        target.classList.contains("documentContent") &&
+        !target.parentElement.classList.contains("checkListItem") &&
+        target.innerText.trim() === "" &&
+        e.key === "Backspace"
+      ) {
+        e.preventDefault();
+        const prevTarget = target.previousElementSibling;
         target.remove();
-        const prevTarget = document.querySelectorAll(".documentContent");
-        if (prevTarget.length > 0) {
-          focusAtEnd(prevTarget[prevTarget.length - 1]);
+        if (prevTarget?.classList?.contains("documentContent")) {
+          focusAtEnd(prevTarget);
         } else {
           focusAtEnd(title);
         }
         return;
       }
 
+      // 체크박스에서 Enter 줄 추가 or 종료
+      if (
+        target.classList.contains("documentContent") &&
+        target.parentElement.classList.contains("checkListItem") &&
+        e.key === "Enter" &&
+        !isComposing &&
+        !e.shiftKey
+      ) {
+        e.preventDefault();
+
+        if (target.innerText.trim() === "") {
+          const newDiv = document.createElement("div");
+          newDiv.className = "documentContent";
+          newDiv.contentEditable = true;
+          newDiv.setAttribute("data-placeholder", "내용을 입력해주세요.");
+
+          target.parentElement.remove();
+          content.appendChild(newDiv);
+
+          focusAtEnd(newDiv);
+        } else {
+          const newCheck = document.createElement("div");
+          newCheck.className = "checkListItem documentContent";
+
+          const newCheckbox = document.createElement("input");
+          newCheckbox.type = "checkbox";
+
+          const newText = document.createElement("div");
+          newText.className = "documentContent";
+          newText.contentEditable = true;
+
+          newCheck.appendChild(newCheckbox);
+          newCheck.appendChild(newText);
+
+          target.parentElement.appendChild(newCheck);
+          focusAtEnd(newText);
+        }
+        return;
+      }
+
+      // 일반 블록에서 Enter 처리
       if (
         target.classList.contains("documentContent") &&
         e.key === "Enter" &&
         !isComposing &&
-        !e.shiftKey // Shift+Enter는 줄바꿈 허용
+        !e.shiftKey
       ) {
         e.preventDefault();
         handleEnter(target);
