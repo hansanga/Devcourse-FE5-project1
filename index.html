@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
     <div class="wrapper">
@@ -18,7 +18,6 @@
                 <button class="setting"></button>
             </div>
             <form class="search">
-                <img>
                 <input type="text" placeholder="검색">
             </form>
             <div class="documents">
@@ -26,27 +25,33 @@
                 </ul>
             </div>
             <div class="footer">
-                <button class="addPage"><img>페이지 추가</button>
-                <img class="info">
+                <button class="addPage">페이지 추가</button>
+                <div class="info">
+                    <div class="none">
+                        2025.04.04 / Team 1 <br>
+                        강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="editor">
             <div class="default">
                 <div class="content center">
-                    <h2>페이지가 없습니다.<br>왼쪽 페이지 추가 버튼을 눌러 페이지를 추가해주세요.</h2>
+                    <h3>페이지가 없습니다.<br>왼쪽 페이지 추가 버튼을 눌러 페이지를 추가해주세요.</h3>
                 </div>
             </div>
             
             <div class="docs none">
                 <div class="header">
                     <span class="pageTree"></span>
-                    <button class="pageDelete"></button>
+                    <button class="deletePage"></button>
                 </div>
                 <div class="content">
                 </div>
             </div>
         </div>
     </div>
+    <script src="./src/components/info_tooltip.js"></script>
 </body>
 </html>
