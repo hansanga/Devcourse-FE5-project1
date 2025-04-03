@@ -72,6 +72,11 @@ hr.documentContent {
 #block-menu div:hover {
   background: #ffffff30;
 }
+#block-menu div[disabled] {
+  cursor: not-allowed;
+  background: #263747;
+  text-decoration: line-through;
+}
 .add-block-btn {
   cursor: pointer;
   position: relative;

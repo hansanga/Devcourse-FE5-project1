@@ -57,8 +57,8 @@ export default function Document({
           <div data-type="list">글머리 기호 목록</div>
           <div data-type="numberList">숫자 목록</div>
           <div data-type="checkList">체크박스 목록</div>
-          <div data-type="horizontalRule">구분선</div>
-          <div data-type="pageLink">페이지 링크</div>
+          <div data-type="horizontalRule" disabled>구분선</div>
+          <div data-type="pageLink" disabled>페이지 링크</div>
         </div>
           `;
     } else {
@@ -74,13 +74,12 @@ export default function Document({
 
   this.render = () => {
     this.$target.innerHTML = this.template();
-    console.log(this.state);
 
     if (!this.state.id) return;
 
     this.$target.querySelector("#deletePage").addEventListener("click", (e) => {
       e.preventDefault();
-      this.handleDelete(); // id 값 추가
+      this.handleDelete(this.state.id);
     });
 
     const content = this.$target.querySelector(".content");
@@ -90,9 +89,19 @@ export default function Document({
     const addBlockBtn = this.$target.querySelector(".add-block-btn");
 
     addBlockBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       blockMenu.style.top = `${e.clientY}px`;
       blockMenu.style.left = `${e.clientX}px`;
-      blockMenu.classList.remove("hidden");
+      if (blockMenu.classList.contains("hidden")) {
+        blockMenu.classList.remove("hidden");
+      } else {
+        blockMenu.classList.add("hidden");
+      }
+    });
+
+    content.addEventListener("click", (e) => {
+      e.preventDefault();
+      blockMenu.classList.add("hidden");
     });
 
     title.focus();
@@ -111,6 +120,7 @@ export default function Document({
     blockMenu.addEventListener("click", (e) => {
       const type = e.target.dataset.type;
       if (!type) return;
+      if (type === "horizontalRule" || type === "pageLink") return;
 
       let block, li, checkbox, checkText;
       switch (type) {
