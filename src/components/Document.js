@@ -134,7 +134,7 @@ export default function Document({
 
       content.appendChild(block);
       if (type === "horizontalRule") {
-        block.style.border = "none";
+        handleEnter(block);
       } else if (type === "checkList") {
         checkText.focus();
       } else focusAtEnd(block);
