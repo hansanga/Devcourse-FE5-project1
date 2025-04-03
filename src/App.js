@@ -11,6 +11,12 @@ export default function App($app) {
   const document = new Document({
     $app,
     initialState: this.state.document,
+    handleDelete: () => {
+      console.log("페이지 삭제 기능");
+    },
+    handleSave: () => {
+      console.log("페이지 저장 기능");
+    },
   });
 
   const sidebar = new Sidebar({
