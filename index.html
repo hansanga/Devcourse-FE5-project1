@@ -1,67 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-    <div class="wrapper">
-        <div class="sideBar">
-            <div class="header">
-                <div class="profile">
-                    <img class="picture">
-                    <div class="name">Devcourse</div>
-                    <div class="description">FE5 1차 팀프로젝트</div>
-                </div>
-                <button class="setting"></button>
-            </div>
-            <form class="search">
-                <img>
-                <input type="text" placeholder="검색">
-            </form>
-            <div class="documents">
-                <ul>
-                </ul>
-            </div>
-            <div class="footer">
-                <button class="addPage"><img>페이지 추가</button>
-                <img class="info">
-            </div>
-        </div>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notion Clone</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <!-- JS가 붙을 메인 컨테이너 -->
+    <div id="app"></div>
 
-        <div class="editor">
-            <div class="default">
-                <div class="content center">
-                    <h2>페이지가 없습니다.<br>왼쪽 페이지 추가 버튼을 눌러 페이지를 추가해주세요.</h2>
-                </div>
-            </div>
-            
-            <div class="docs none">
-                <div class="header">
-                    <span class="pageTree"></span>
-                    <button class="pageDelete"></button>
-                </div>
-                <div class="content">
-                </div>
-            </div>
-        </div>
-        <div class="footer">
-          <button class="addPage"><img>페이지 추가</button>
-          <div class="info">?</div>
-        </div>
-      </div>
-
-      <div class="editor">
-        <div class="header">
-          <div class="pageTree"></div>
-          <button class="pageDelete">삭제</button>
-        </div>
-        <div class="content">
-
-        </div>
-      </div>
-    </div>
+    <!-- JS 연결 (모듈 타입 중요) -->
+    <script type="module" src="./src/index.js"></script>
   </body>
 </html>

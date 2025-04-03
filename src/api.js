@@ -1,55 +1,53 @@
-const API_URL = "https://kdt-api.fe.dev-cos.com/documents/";
+// src/api.js
 
-const request = async (method, id = "", data = null) => {
-  try {
-    const response = await fetch(API_URL + id, {
-      headers: {
-        "Content-Type": "application/json",
-        "x-username": "test",
-      },
-      method,
-      body: data ? JSON.stringify(data) : null,
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Network response was not ok. error code is ${response.status}`
-      );
-    }
-    return response.json();
-  } catch (error) {
-    console.error(error);
-  }
-};
+const BASE_URL = "https://kdt-api.fe.dev-cos.com";
+const USERNAME = "kyeong_rok";
 
-const getDocuments = async (id = "") => {
-  const response = await request("GET", id);
-  return response;
-};
+export async function getDocuments() {
+  const res = await fetch(`${BASE_URL}/documents`, {
+    headers: {
+      "x-username": USERNAME,
+    },
+  });
+  if (!res.ok) throw new Error("문서 목록 불러오기 실패");
+  return await res.json();
+}
 
-const createDocument = async (data) => {
-  const response = await request("POST", "", data);
-  return response;
-};
+export async function getDocument(id) {
+  const res = await fetch(`${BASE_URL}/documents/${id}`, {
+    headers: {
+      "x-username": USERNAME,
+    },
+  });
+  if (!res.ok) throw new Error("문서 불러오기 실패");
+  return await res.json();
+}
 
-const updateDocument = async (id, data) => {
-  const response = await request("PUT", id, data);
-  return response;
-};
+export async function createDocument() {
+  const res = await fetch(`${BASE_URL}/documents`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-username": USERNAME,
+    },
+    body: JSON.stringify({
+      title: "제목 없음",
+      parent: null,
+    }),
+  });
+  if (!res.ok) throw new Error("문서 생성 실패");
+  return await res.json();
+}
 
-const deleteDocument = async (id) => {
-  const response = await request("DELETE", id);
-  return response;
-};
-
-const getDocument = async (id) => {
-  const response = await request("GET", id);
-  return response;
-};
-
-export {
-  getDocuments,
-  createDocument,
-  updateDocument,
-  deleteDocument,
-  getDocument,
-};
+export async function updateDocument(id, data) {
+  const res = await fetch(`${BASE_URL}/documents/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "x-username": USERNAME,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("문서 수정 실패");
+  return await res.json();
+}
