@@ -1,47 +1,110 @@
 .sideBar {
-    position: fixed;
-    width: 250px;
-    height: 100%;
-    background-color: #263747;
+  position: fixed;
+  width: 250px;
+  height: 100%;
+  background-color: #263747;
 }
+
+.sideBar .header {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid;
+  border-color: #0c151c;
+}
+
+.sideBar .header .profile {
+  margin-left: 10px;
+}
+.sideBar .header .picture {
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
+}
+
+.sideBar .header .profile .description {
+  opacity: 0.6;
+}
+
 .sideBar .search {
-    height: 30px;
-    padding-left: 30px;
-    background: url("../images/icon_search.png") left center / 35px 35px no-repeat;
+  display: flex;
+  background: url("../images/icon_search.png") left center / 24px 24px no-repeat;
+  margin: 15px;
 }
+
+.sideBar .search input {
+  background-color: transparent;
+  border-style: none;
+  margin-left: 29px;
+}
+
+.sideBar .search ::placeholder {
+  color: #fff;
+}
+
+.sideBar .documents {
+  height: 500px;
+  padding: 15px;
+  border-top: 1px solid;
+  border-color: #0c151c;
+}
+
+.sideBar .documents .document {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat;
+}
+
+.sideBar .documents .sub {
+  margin-left: 20px;
+}
+
+.sideBar .documents .document .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-left: 25px;
+  background: url("../images/icon_add.png") right center / 20px 20px no-repeat;
+}
+
 .sideBar .footer {
-    position: absolute;
-    padding: 5px;
-    width: 100%;
-    bottom: 0;
-    border-top: 1px solid #0C151C;
+  position: absolute;
+  padding: 5px;
+  width: 100%;
+  bottom: 0;
+  border-top: 1px solid #0c151c;
 }
+
 .sideBar .footer .addPage {
-    width: 100%;
-    height: 30px;
-    text-align: left;
-    padding-left: 40px;
-    background: url("../images/icon_add.png") left center / 35px 35px no-repeat;
+  width: 100%;
+  height: 30px;
+  text-align: left;
+  padding-left: 40px;
+  background: url("../images/icon_add.png") left center / 30px 30px no-repeat;
+  border: none;
 }
+
 .sideBar .footer .addPage:hover {
-    background-color: #ffffff30;
-    border-radius: 5px;
+  background-color: #ffffff30;
+  border-radius: 5px;
 }
+
 .sideBar .footer .info {
-    float: right;
-    width: 35px;
-    height: 35px;
-    background: url("../images/icon_help.png") center / cover;
+  float: right;
+  width: 24px;
+  height: 24px;
+  background: url("../images/icon_help.png") center / cover;
 }
 .info div {
-    position: relative;
-    bottom: 45px;
-    left: -5px;
-    width: 280px;
-    padding: 5px 14px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.75);
-    border-radius: 5px;
-    background-color: #263747;
-    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
+  bottom: 45px;
+  left: -5px;
+  width: 280px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 5px;
+  background-color: #263747;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
 }

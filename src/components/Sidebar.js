@@ -7,33 +7,48 @@ export default function Sidebar({ $app, initialState }) {
 
   this.template = () => {
     let temp = `
-      <div class="sideBar">
         <div class="header">
           <div class="profile">
-            <img class="picture" />
+            <img class="picture" src="./images/profile.png" />
             <div class="name">Devcourse</div>
             <div class="description">FE5 1차 팀프로젝트</div>
           </div>
-          <button class="setting">설정</button>
+          <button class="setting"></button>
         </div>
+
         <form class="search">
-          <img />
           <input type="text" placeholder="검색" />
         </form>
+
         <div class="documents">
-          페이지가 없어요. 아래 페이지 추가 버튼을 눌러 페이지를 추가해주세요.
+          <ul></ul>
         </div>
+
         <div class="footer">
-          <button class="addPage"><img />페이지 추가</button>
-          <div class="info">?</div>
+          <button class="addPage">페이지 추가</button>
+          <div class="info">
+            <div class="none">
+              2025.04.03 ~ 2025.04.04 / Team 1 <br />
+              강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
+            </div>
+          </div>
         </div>
-      </div>
     `;
     return temp;
   };
 
   this.render = () => {
     this.$target.innerHTML = this.template();
+
+    const info = document.querySelector(".info");
+    const tooltip = document.querySelector(".info div");
+
+    info.addEventListener("mouseover", () => {
+      tooltip.className = "";
+    });
+    info.addEventListener("mouseout", () => {
+      tooltip.className = "none";
+    });
   };
 
   this.setState = (newState) => {
