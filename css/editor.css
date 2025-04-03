@@ -29,3 +29,19 @@
     margin: auto;
     padding: 200px 0 200px 0;
 }
+
+[contenteditable="true"]:empty::before {
+    content: attr(placeholder);
+    color: #999;
+}
+[contenteditable="true"]:focus-visible {
+    outline: none;
+}
+/* .checkListItem {
+    display: flex;
+    width: 100%;
+} */
+.checkListItem div {
+    width: 100%;
+}
+  
