@@ -12,13 +12,15 @@ export default function Sidebar({ $app, initialState }) {
 
   
   const renderDocumentTree = (documents) => {
-    return documents.map((doc) => `
+    return documents.map(doc => `
       <li class="document">
         <a class="title" id="${doc.id}">${doc.title}</a>
-        ${doc.documents && doc.documents.length > 0 ? `<ul class="sub none">${renderDocumentTree(doc.documents)}</ul>` : ""}
+        <span class="add-icon"></span>
+        ${doc.documents && doc.documents.length > 0 ? `<ul class="sub">${renderDocumentTree(doc.documents)}</ul>` : ""}
       </li>
     `).join("");
   };
+  
 
   const renderDocuments = () => {
     const documentList = $target.querySelector("ul");
@@ -41,10 +43,16 @@ export default function Sidebar({ $app, initialState }) {
 
   $target.addEventListener("click", (event) => {
     if (event.target.classList.contains("title")) {
-      const onList = event.target.nextElementSibling;
+      const onList = event.target.nextElementSibling?.nextElementSibling;
       if (onList) {
         onList.classList.toggle("none");
       }
+    }
+
+    if (event.target.classList.contains("add-icon")) {
+      const parentDocumentId = event.target.previousElementSibling.id;
+      createSubDocument(parentDocumentId);
+      
     }
   });
 
@@ -93,6 +101,27 @@ export default function Sidebar({ $app, initialState }) {
       link.style.display = pageTitle.includes(searchTerm) ? "" : "none";
     });
   };
+
+  //하위문서 생성
+  const createSubDocument = async (parentDocumentId) => {
+    try {
+      const newDocumentData = await createDocument({
+        title: "하위 문서",
+        parent: parentDocumentId,  
+      });
+  
+      const parentDocument = state.find(doc => doc.id === parseInt(parentDocumentId));
+      if (parentDocument) {
+        parentDocument.documents.push(newDocumentData);
+        renderDocuments();
+      }
+      
+    } catch (error) {
+      console.error("하위 문서 생성 실패:", error);
+    }
+  };
+  
+  
 
   const render = () => {
     fetchDocuments();
