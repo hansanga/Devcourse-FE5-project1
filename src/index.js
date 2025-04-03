@@ -1,5 +1,5 @@
 import App from "./App.js";
 
-const $app = document.getElementById("app");
+const $app = document.querySelector(".wrapper");
 
 new App($app);
