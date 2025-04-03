@@ -39,12 +39,19 @@ Notion Clone Project는 Vanilla JS 를 사용하여 SPA로 구현된 프로젝�
 
 ## ✏️ Code convention
 
--
+- Fix: 수정 내용 작성
+- Feat: 새로운 기능 추가, 사용자 입장에서 변화가 있을 경우
+- Chore: 그 외 자잘한 수정에 대한 커밋, 주석, 리드미 수정
+- Style: CSS 스타일 관련 변경
+- Refactor: 코드 리팩토링에 대한 커밋, 사용자 입장에서 변화가 없는 코드, 파일명 폴더명 변경 및 이동
+- Remove: 파일을 삭제하는 작업만 수행하는 경우
+- Format: 코드 포맷팅 변경에 관련된 작업
 
 ## 📂 폴더 구조
 
 ```
 ├── README.md
+├── images
 ├── server
 │   └── server.js
 ├── css
@@ -72,3 +79,5 @@ node ./server/server.js
 
 http://localhost:3000
 ```
+
+## 💻 완성 사진
