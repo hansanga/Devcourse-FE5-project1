@@ -33,3 +33,15 @@
     height: 35px;
     background: url("../images/icon_help.png") center / cover;
 }
+.info div {
+    position: relative;
+    bottom: 45px;
+    left: -5px;
+    width: 280px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
+    background-color: #263747;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.5);
+}
