@@ -66,7 +66,7 @@ export default function Document({
       const type = e.target.dataset.type;
       if (!type) return;
 
-      let block, li, checkbox, checkText;
+      let block, li, checkbox, checkText, link;
       switch (type) {
         case "heading1":
           block = document.createElement("h1");
@@ -115,25 +115,24 @@ export default function Document({
           block = document.createElement("hr");
           break;
         case "pageLink":
-          block = document.createElement("a");
-          block.href = "#";
-          block.textContent = "페이지 링크";
+          block = document.createElement("div");
+          block.className = "";
+
+          link = document.createElement("a");
+          link.href = "#";
+          link.textContent = "개발중";
+          block.appendChild(link);
           break;
         default:
           block = document.createElement("div");
           break;
       }
       block.classList.add("documentContent");
-      if (
-        !li &&
-        type !== "checkList" &&
-        type !== "pageLink" &&
-        type !== "horizontalRule"
-      )
+      if (!li && type !== "checkList" && type !== "horizontalRule")
         block.contentEditable = true;
 
       content.appendChild(block);
-      if (type === "horizontalRule") {
+      if (type === "horizontalRule" || type === "pageLink") {
         handleEnter(block);
       } else if (type === "checkList") {
         checkText.focus();
