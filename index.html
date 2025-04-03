@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <div class="wrapper">
@@ -14,28 +15,36 @@
                     <div class="name">Devcourse</div>
                     <div class="description">FE5 1차 팀프로젝트</div>
                 </div>
-                <button class="setting">설정</button>
+                <button class="setting"></button>
             </div>
             <form class="search">
                 <img>
                 <input type="text" placeholder="검색">
             </form>
             <div class="documents">
-                페이지가 없어요. 아래 페이지 추가 버튼을 눌러 페이지를 추가해주세요.
+                <ul>
+                </ul>
             </div>
             <div class="footer">
                 <button class="addPage"><img>페이지 추가</button>
-                <div class="info">?</div>
+                <img class="info">
             </div>
         </div>
 
         <div class="editor">
-            <div class="header">
-                <div class="pageTree"></div>
-                <button clss="pageDelete">삭제</button>
+            <div class="default">
+                <div class="content center">
+                    <h2>페이지가 없습니다.<br>왼쪽 페이지 추가 버튼을 눌러 페이지를 추가해주세요.</h2>
+                </div>
             </div>
-            <div class="content">
-
+            
+            <div class="docs none">
+                <div class="header">
+                    <span class="pageTree"></span>
+                    <button class="pageDelete"></button>
+                </div>
+                <div class="content">
+                </div>
             </div>
         </div>
     </div>
