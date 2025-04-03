@@ -166,24 +166,21 @@
   border-color: #0c151c;
 }
 
-.sideBar .documents .document {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat;
+.sideBar .documents ul {
+  list-style: none;
+  padding-left: 0px;
 }
 
 .sideBar .documents .sub {
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .sideBar .documents .document .title {
+  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat,
+    url("../images/icon_add.png") right center / 20px 20px no-repeat;
+  padding-left: 25px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-left: 25px;
-  background: url("../images/icon_add.png") right center / 20px 20px no-repeat;
+  margin-bottom: 5px;
 }
 
 .sideBar .footer {
