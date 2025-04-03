@@ -5,22 +5,16 @@ import { getDocuments, updateDocument, deleteDocument } from "./api.js";
 export default function App($app) {
   this.state = {
     sidebar: {},
-    document: {
-      id: 149904,
-      title: "test",
-      createdAt: "2025-04-03T00:44:17.225Z",
-      updatedAt: "2025-04-03T17:59:35.464Z",
-      content:
-        '\n          \n              <div class="documentContent" contenteditable="true" placeholder="내용을 입력해주세요.">ddddd</div><div class="documentContent" contenteditable="true">ㅇㅇㅇㅇ</div><div class="documentContent" contenteditable="true">ㅁㄴㅇㅁㄴㅇ</div><div class="documentContent" contenteditable="true"></div>\n            \n          <h1 class="documentContent" contenteditable="true">제목1</h1><div class="documentContent" contenteditable="true"></div><ul class="documentContent"><li class="documentContent" contenteditable="true">리스트</li></ul><ol class="documentContent"><li class="documentContent" contenteditable="true">리스트</li></ol><div class="checkListItem documentContent"><input type="checkbox"><div class="documentContent" contenteditable="true">ㅇ</div></div><hr class="documentContent" style="border: none;">',
-      documents: [],
-    },
+    document: {},
   };
 
   const document = new Document({
     $app,
     initialState: this.state.document,
     handleDelete: async (id) => {
-      await deleteDocument(id);
+      const response = await deleteDocument(id);
+      console.log(response);
+
       const documents = await getDocumentsList();
       this.setState({
         ...this.state,
@@ -33,6 +27,7 @@ export default function App($app) {
       if (title) params.title = title;
       if (content) params.content = content;
       const response = await updateDocument(this.state.document.id, params);
+      //
       console.log(response);
       // this.setState({
       //   ...this.state,
@@ -46,6 +41,7 @@ export default function App($app) {
     return response;
   };
 
+  // 페이지 클릭 하면 해당 데이터 가져와서 this.state.document에 저장
   const sidebar = new Sidebar({
     $app,
     initialState: this.state.sidebar,
@@ -56,6 +52,14 @@ export default function App($app) {
     sidebar.setState(this.state.sidebar);
     document.setState(this.state.document);
   };
+
+  window.addEventListener("popstate", async () => {
+    // TODO
+    // 링크에 따른 데이터 불러와서 저장 해야함
+    // 현재 페이지 주소 가져오기
+    // 현재 페이지 주소에 따른 데이터 가져오기
+    // this.setState에 저장
+  });
 
   const init = async () => {
     const docuemtnsData = await getDocumentsList();
