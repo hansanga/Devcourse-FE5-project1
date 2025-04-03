@@ -21,7 +21,7 @@ const request = async (method, id = "", data = null) => {
   }
 };
 
-const getDocuments = async (id = null) => {
+const getDocuments = async (id = "") => {
   const response = await request("GET", id);
   return response;
 };
