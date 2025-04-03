@@ -1,5 +1,5 @@
 // src/components/Document.js
-import { getDocument } from "../api.js";
+import { getDocument, getDocuments } from "../api.js";
 
 const getDocumentIdFromHash = () => {
   const hash = window.location.hash;
@@ -33,9 +33,45 @@ export default function Document({ $app, initialState, onSave }) {
     };
 
     console.log("💾 저장 시도 중:", updated);
-    
     onSave?.(updated);
   }, 1000);
+
+  const buildPath = (documents, targetId) => {
+    const path = [];
+
+    const findPath = (list, id) => {
+      for (const doc of list) {
+        if (doc.id === id) {
+          path.unshift(doc.title || "제목 없음");
+          return true;
+        }
+        if (doc.documents?.length && findPath(doc.documents, id)) {
+          path.unshift(doc.title || "제목 없음");
+          return true;
+        }
+      }
+      return false;
+    };
+
+    findPath(documents, targetId);
+    return path.join(" > ");
+  };
+
+  const deleteDocument = async (id) => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      await fetch(`https://kdt-api.fe.dev-cos.com/documents/${id}`, {
+        method: "DELETE",
+        headers: {
+          "x-username": "kyeong_rok",
+        },
+      });
+      alert("삭제되었습니다.");
+      location.hash = ""; // 초기화면으로 이동
+    } catch (e) {
+      console.error("문서 삭제 실패", e);
+    }
+  };
 
   this.template = () => {
     return `
@@ -56,7 +92,7 @@ export default function Document({ $app, initialState, onSave }) {
     `;
   };
 
-  this.render = () => {
+  this.render = async () => {
     this.$target.innerHTML = this.template();
 
     const $title = this.$target.querySelector(".titleInput");
@@ -65,6 +101,24 @@ export default function Document({ $app, initialState, onSave }) {
     if ($title && $content) {
       $title.addEventListener("input", saveDocument);
       $content.addEventListener("input", saveDocument);
+    }
+
+    const $pageTree = this.$target.querySelector(".pageTree");
+    if ($pageTree && this.state.id) {
+      try {
+        const documents = await getDocuments();
+        const path = buildPath(documents, this.state.id);
+        $pageTree.textContent = path;
+      } catch (e) {
+        console.error("경로 표시 실패", e);
+      }
+    }
+
+    const $deleteBtn = this.$target.querySelector(".pageDelete");
+    if ($deleteBtn && this.state.id) {
+      $deleteBtn.addEventListener("click", () => {
+        deleteDocument(this.state.id);
+      });
     }
   };
 
