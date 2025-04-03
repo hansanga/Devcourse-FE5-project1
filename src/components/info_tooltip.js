@@ -1,4 +1,4 @@
-window.addEventListener("DOMContentLoaded", () => {
+export default function infoTooltip() {
     const info = document.querySelector(".info");
     const tooltip = document.querySelector(".info div");
 
@@ -7,5 +7,5 @@ window.addEventListener("DOMContentLoaded", () => {
     })
     info.addEventListener("mouseout", () => {
         tooltip.className = "none";
-    })
-})
+    });
+}

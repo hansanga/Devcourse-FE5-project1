@@ -6,7 +6,7 @@ const request = async (method, id = "", data = null) => {
     const response = await fetch(API_URL + id, {
       headers: {
         "Content-Type": "application/json",
-        "x-username": "hannn",
+        "x-username": "han",
       },
       method,
       body: data ? JSON.stringify(data) : null,
