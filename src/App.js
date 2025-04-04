@@ -56,14 +56,14 @@ export default function App($app) {
       this.setState({
         ...this.state,
         document,
-        parentDocumentId: id,
+        parentDocumentId: id ? id : "",
       });
     },
   });
 
   this.setState = (newState) => {
     this.state = newState;
-    if (this.state.parentDocumentId) {
+    if (this.state.parentDocumentId || !this.state.document.id) {
       document.setState(this.state.document);
     } else {
       sidebar.setState(this.state.sidebar);
@@ -73,11 +73,14 @@ export default function App($app) {
   window.addEventListener("popstate", async () => {
     const path = window.location.pathname;
     const id = path.split("/")[2];
-    const document = await getDocument(id);
+    let document = {};
+    if (id) {
+      document = await getDocument(id);
+    }
     this.setState({
       ...this.state,
-      document,
-      parentDocumentId: id,
+      document: document ? document : {},
+      parentDocumentId: id ? id : "",
     });
   });
 
@@ -91,8 +94,8 @@ export default function App($app) {
     this.setState({
       ...this.state,
       sidebar: docuemtnsData,
-      document: document,
-      parentDocumentId: id,
+      document: document ? document : {},
+      parentDocumentId: id ? id : "",
     });
   };
 
