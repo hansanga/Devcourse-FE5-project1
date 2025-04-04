@@ -79,8 +79,8 @@ hr.documentContent {
 }
 .add-block-btn {
   cursor: pointer;
-  position: relative;
-  left: -40px;
+  position: absolute;
+  right: 20%;
   width: 30px;
   height: 30px;
   background: url("../images/icon_add.png") center / cover;
