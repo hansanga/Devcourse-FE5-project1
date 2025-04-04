@@ -173,8 +173,9 @@
 }
 
 .sideBar .documents {
-  flex: 1; /* 나머지 공간을 모두 차지 */
-  overflow: auto;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
   padding: 15px;
   border-top: 1px solid;
   border-color: #0c151c;
@@ -185,6 +186,7 @@
 .sideBar .documents::-webkit-scrollbar {
   background-color: transparent;
   width: 6px;
+  height: 6px;
 }
 /* 스크롤바 막대 설정*/
 .sideBar .documents::-webkit-scrollbar-thumb {
@@ -212,6 +214,15 @@
   margin-bottom: 5px;
   justify-content: space-between;
   align-items: center;
+  white-space: nowrap;
+}
+
+.sideBar .documents .document .title .titleText {
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block; */
+  /* max-width: 160px; 실제 보여질 최대 폭 */
 }
 
 .sideBar .documents .document .title img {
@@ -234,6 +245,7 @@
   padding-left: 40px;
   background: url("../images/icon_add.png") left center / 30px 30px no-repeat;
   border: none;
+  cursor: pointer;
 }
 
 .sideBar .footer .addPage:hover {
