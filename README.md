@@ -57,14 +57,15 @@ Notion Clone Project는 Vanilla JS 를 사용하여 SPA로 구현된 프로젝�
 ├── css
 │   ├── editor.css
 │   ├── reset.css
-│   ├── style.css
 │   └── sidebar.css
 ├── index.html
+├── style.css
 └── ./src
   ├── api.js
   ├── app.js
   ├── components
   │   ├── Document.js
+  │   ├── info_tooltip.js
   └   └── Sidebar.js
 ```
 
