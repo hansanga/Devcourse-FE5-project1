@@ -4,95 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notion Clone</title>
-    <link rel="stylesheet" type="text/css" href="./css/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=delete"
-    />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
   </head>
   <body>
     <div class="modalBg none">
-        <div class="modal">
-            <div class="user">
-              <div class="userTitle">계정</div>
-              <div class="userContents">
-                <div class="profileImage">
-                    <img src="./images/profile.png">
-                    <button>사진 추가</button>
-                </div>
-                <div class="profileName">
-                    <div>선호하는 이름</div>
-                    <input type="text"></input>
-                </div>
+      <div class="modal">
+          <div class="user">
+            <div class="userTitle">계정</div>
+            <div class="userContents">
+              <div class="profileImage">
+                  <img src="/images/profile.png">
+                  <button>사진 추가</button>
+              </div>
+              <div class="profileName">
+                  <div>선호하는 이름</div>
+                  <input type="text"></input>
               </div>
             </div>
-            <div class="theme">
-              <div class="themeTitle">기본설정</div>
-              <div class="themeContents">
-                <div>
-                    <div>테마</div>
-                    <div class="subText">내 기기에서 Notion의 모습을 마음껏 바꿔보세요.</div>
-                </div>
-                <ul class="themeList">
-                    <li>다크모드</li>
-                    <li class="none">라이트모드</li>
-                </ul>
+          </div>
+          <div class="theme">
+            <div class="themeTitle">기본설정</div>
+            <div class="themeContents">
+              <div>
+                  <div>테마</div>
+                  <div class="subText">내 기기에서 Notion의 모습을 마음껏 바꿔보세요.</div>
               </div>
-            </div>
-        </div>
-    </div>
-    <div class="wrapper">
-      <div class="sideBar">
-        <div class="header">
-          <div class="profile">
-            <img class="picture" src="./images/profile.png" />
-            <div>
-               <div class="name">Devcourse</div>
-              <div class="description">FE5 1차 팀프로젝트</div>
+              <ul class="themeList">
+                  <li>다크모드</li>
+                  <li class="none">라이트모드</li>
+              </ul>
             </div>
           </div>
-          <button class="setting"></button>
-        </div>
-
-        <form class="search">
-          <input type="text" placeholder="검색" />
-        </form>
-
-        <div class="documents">
-          <ul></ul>
-        </div>
-
-        <div class="footer">
-          <button class="addPage">페이지 추가</button>
-          <div class="info">
-            <div class="none">
-              2025.04.03 ~ 2025.04.04 / Team 1 <br />
-              강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
-            </div>
-          </div>
-        </div>
       </div>
-
-      <div class="editor">
-        <div class="default">
-          <div class="content center">
-            <h3>
-              페이지가 없습니다.<br />
-              왼쪽 페이지 추가 버튼을 눌러 페이지를 추가해주세요.
-            </h3>
-          </div>
-        </div>
-
-        <div class="docs none">
-          <div class="header">
-            <span class="pageTree"></span>
-            <button class="deletePage"></button>
-          </div>
-          <div class="content"></div>
-        </div>
-      </div>
-    </div>
-    <script src="src/index.js" type="module"></script>
-    <!-- <script src="./src/components/info_tooltip.js"></script> -->
+  </div>
+    <div class="wrapper" id="app"></div>
+    <script src="/src/index.js" type="module"></script>
   </body>
 </html>
