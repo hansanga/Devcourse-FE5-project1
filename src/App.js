@@ -32,12 +32,11 @@ export default function App($app) {
       const params = {};
       if (title) params.title = title;
       if (content) params.content = content;
-      const response = await updateDocument(this.state.document.id, params);
-      //
-      console.log(response);
+      await updateDocument(this.state.document.id, params);
+      // const documents = await getDocuments();
       // this.setState({
       //   ...this.state,
-      //   document: response,
+      //   sidebar: documents,
       // });
     },
   });
@@ -78,14 +77,22 @@ export default function App($app) {
     this.setState({
       ...this.state,
       document,
+      parentDocumentId: id,
     });
   });
 
   const init = async () => {
     const docuemtnsData = await getDocumentsList();
+    const id = window.location.pathname.split("/")[2];
+    let document = {};
+    if (id) {
+      document = await getDocument(id);
+    }
     this.setState({
       ...this.state,
       sidebar: docuemtnsData,
+      document: document,
+      parentDocumentId: id,
     });
   };
 
