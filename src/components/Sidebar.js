@@ -5,6 +5,7 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
   this.isFetched = false;
 
   this.handleClickDocument = handleClickDocument;
+  this.$modal = document.querySelector(".modalBg")
   this.$target = document.createElement("div");
   this.$target.className = "sideBar";
   $app.appendChild(this.$target);
@@ -80,6 +81,7 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
     }
   };
 
+
   // 새페이지 생성
   this.fetchData = async () => {
     try {
@@ -136,6 +138,7 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
   // 하위문서 토글
   this.addEventListeners = () => {
     const documentList = this.$target.querySelector(".documents ul");
+    const setting = this.$target.querySelector(".setting");
 
     documentList.addEventListener("click", async (event) => {
       const parentDocumentId = event.target
@@ -155,6 +158,18 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
 
       if (event.target.classList.contains("add-icon")) {
         this.createSubDocument(parentDocumentId);
+      }
+    });
+
+
+    setting.addEventListener("click", (event) => {
+      console.log("Modal clicked", event);
+      this.$modal.classList.toggle("none")
+    });
+
+    this.$modal.addEventListener("click", (event) => {
+      if (event.target === this.$modal) {
+        this.$modal.classList.add("none"); 
       }
     });
 
