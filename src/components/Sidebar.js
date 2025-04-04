@@ -161,7 +161,8 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
       }
     });
 
-
+    const theme = this.$modal.querySelector(".themeList");
+    // 모달 클릭
     setting.addEventListener("click", (event) => {
       console.log("Modal clicked", event);
       this.$modal.classList.toggle("none")
@@ -171,6 +172,15 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
       if (event.target === this.$modal) {
         this.$modal.classList.add("none"); 
       }
+    });
+
+    theme.addEventListener("click", (event) => {
+      console.log("theme clicked", event);
+      const listItems = this.$modal.querySelectorAll(".themeList li");
+  
+      listItems.forEach(item => {
+        item.classList.toggle("none"); 
+  });
     });
 
     const addPage = this.$target.querySelector(".addPage");
