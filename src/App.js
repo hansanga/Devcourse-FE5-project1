@@ -1,11 +1,17 @@
 import Document from "./components/Document.js";
 import Sidebar from "./components/Sidebar.js";
-import { getDocuments, updateDocument, deleteDocument } from "./api.js";
+import {
+  getDocuments,
+  updateDocument,
+  deleteDocument,
+  getDocument,
+} from "./api.js";
 
 export default function App($app) {
   this.state = {
     sidebar: {},
     document: {},
+    parentDocumentId: "",
   };
 
   const document = new Document({
@@ -45,20 +51,34 @@ export default function App($app) {
   const sidebar = new Sidebar({
     $app,
     initialState: this.state.sidebar,
+    handleClickDocument: async (id) => {
+      history.pushState(null, null, `/documents/${id}`);
+      const document = await getDocument(id);
+      this.setState({
+        ...this.state,
+        document,
+        parentDocumentId: id,
+      });
+    },
   });
 
   this.setState = (newState) => {
     this.state = newState;
-    sidebar.setState(this.state.sidebar);
-    document.setState(this.state.document);
+    if (this.state.parentDocumentId) {
+      document.setState(this.state.document);
+    } else {
+      sidebar.setState(this.state.sidebar);
+    }
   };
 
   window.addEventListener("popstate", async () => {
-    // TODO
-    // 링크에 따른 데이터 불러와서 저장 해야함
-    // 현재 페이지 주소 가져오기
-    // 현재 페이지 주소에 따른 데이터 가져오기
-    // this.setState에 저장
+    const path = window.location.pathname;
+    const id = path.split("/")[2];
+    const document = await getDocument(id);
+    this.setState({
+      ...this.state,
+      document,
+    });
   });
 
   const init = async () => {

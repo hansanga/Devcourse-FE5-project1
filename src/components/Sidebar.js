@@ -1,9 +1,10 @@
 import { getDocuments, createDocument } from "../api.js";
 
-export default function Sidebar({ $app, initialState }) {
+export default function Sidebar({ $app, initialState, handleClickDocument }) {
   this.state = initialState;
   this.isFetched = false;
 
+  this.handleClickDocument = handleClickDocument;
   this.$target = document.createElement("div");
   this.$target.className = "sideBar";
   $app.appendChild(this.$target);
@@ -11,7 +12,7 @@ export default function Sidebar({ $app, initialState }) {
   this.template = () => `
     <div class="header">
       <div class="profile">
-        <img class="picture" src="./images/profile.png" />
+        <img class="picture" src="/images/profile.png" />
         <div class="name">Devcourse</div>
         <div class="description">FE5 1차 팀프로젝트</div>
       </div>
@@ -38,12 +39,24 @@ export default function Sidebar({ $app, initialState }) {
   `;
 
   this.renderDocumentTree = (documents) => {
-    return documents.map(doc => `
+    return documents
+      .map(
+        (doc) => `
       <li class="document">
-        <a class="title" id="${doc.id}">${doc.title}<img class="add-icon" src="./images/icon_add.png"></a>
-        ${doc.documents && doc.documents.length > 0 ? `<ul class="sub">${this.renderDocumentTree(doc.documents)}</ul>` : ""}
+        <a class="title" id="${doc.id}">${
+          doc.title
+        }<img class="add-icon" src="/images/icon_add.png"></a>
+        ${
+          doc.documents && doc.documents.length > 0
+            ? `<ul class="sub none">${this.renderDocumentTree(
+                doc.documents
+              )}</ul>`
+            : ""
+        }
       </li>
-    `).join("");
+    `
+      )
+      .join("");
   };
 
   this.renderDocuments = () => {
@@ -65,7 +78,6 @@ export default function Sidebar({ $app, initialState }) {
     }
   };
 
-
   // 새페이지 생성
   this.fetchData = async () => {
     try {
@@ -85,10 +97,12 @@ export default function Sidebar({ $app, initialState }) {
     try {
       const newDocumentData = await createDocument({
         title: "하위 문서",
-        parent: parentDocumentId,  
+        parent: parentDocumentId,
       });
 
-      const parentDocument = this.state.find(doc => doc.id === parseInt(parentDocumentId));
+      const parentDocument = this.state.find(
+        (doc) => doc.id === parseInt(parentDocumentId)
+      );
       if (parentDocument) {
         parentDocument.documents.push(newDocumentData);
         this.renderDocuments();
@@ -98,7 +112,7 @@ export default function Sidebar({ $app, initialState }) {
     }
   };
 
-  // 검색기능 
+  // 검색기능
   this.filter = () => {
     const searchInput = this.$target.querySelector(".search input");
     const documentList = this.$target.querySelector(".documents ul");
@@ -121,7 +135,13 @@ export default function Sidebar({ $app, initialState }) {
   this.addEventListeners = () => {
     const documentList = this.$target.querySelector(".documents ul");
 
-    documentList.addEventListener("click", (event) => {
+    documentList.addEventListener("click", async (event) => {
+      const parentDocumentId = event.target
+        .closest(".document")
+        .querySelector(".title").id;
+
+      console.log(parentDocumentId);
+
       if (event.target.classList.contains("title")) {
         const onList = event.target.parentElement.querySelector(".sub");
         if (onList) {
@@ -129,8 +149,9 @@ export default function Sidebar({ $app, initialState }) {
         }
       }
 
+      await handleClickDocument(parentDocumentId);
+
       if (event.target.classList.contains("add-icon")) {
-        const parentDocumentId = event.target.closest(".document").querySelector(".title").id;
         this.createSubDocument(parentDocumentId);
       }
     });
