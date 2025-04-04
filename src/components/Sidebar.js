@@ -12,9 +12,11 @@ export default function Sidebar({ $app, initialState, handleClickDocument }) {
   this.template = () => `
     <div class="header">
       <div class="profile">
-        <img class="picture" src="/images/profile.png" />
-        <div class="name">Devcourse</div>
-        <div class="description">FE5 1차 팀프로젝트</div>
+        <img class="picture" src="./images/profile.png" />
+        <div>
+          <div class="name">Devcourse</div>
+          <div class="description">FE5 1차 팀프로젝트</div>
+        </div>
       </div>
       <button class="setting"></button>
     </div>
