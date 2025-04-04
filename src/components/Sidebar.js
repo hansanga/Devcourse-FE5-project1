@@ -1,134 +1,107 @@
 import { getDocuments, createDocument } from "../api.js";
-import infoTooltip from "./info_tooltip.js"; 
-
 
 export default function Sidebar({ $app, initialState }) {
-  let state = initialState;
-  let isFetched = false;
+  this.state = initialState;
+  this.isFetched = false;
 
-  const $target = document.querySelector(".documents");
-  // $target.className = "sideBar";
-  // $app.appendChild($target);
+  this.$target = document.createElement("div");
+  this.$target.className = "sideBar";
+  $app.appendChild(this.$target);
 
-  this.template = () => {
-    let temp = `
-        <div class="header">
-          <div class="profile">
-            <img class="picture" src="./images/profile.png" />
-            <div class="name">Devcourse</div>
-            <div class="description">FE5 1차 팀프로젝트</div>
-          </div>
-          <button class="setting"></button>
+  this.template = () => `
+    <div class="header">
+      <div class="profile">
+        <img class="picture" src="./images/profile.png" />
+        <div class="name">Devcourse</div>
+        <div class="description">FE5 1차 팀프로젝트</div>
+      </div>
+      <button class="setting"></button>
+    </div>
+
+    <form class="search">
+      <input type="text" placeholder="검색" />
+    </form>
+
+    <div class="documents">
+      <ul></ul>
+    </div>
+
+    <div class="footer">
+      <button class="addPage">페이지 추가</button>
+      <div class="info">
+        <div class="none">
+          2025.04.03 ~ 2025.04.04 / Team 1 <br />
+          강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
         </div>
+      </div>
+    </div>
+  `;
 
-        <form class="search">
-          <input type="text" placeholder="검색" />
-        </form>
-
-        <div class="documents">
-          <ul></ul>
-        </div>
-
-        <div class="footer">
-          <button class="addPage">페이지 추가</button>
-          <div class="info">
-            <div class="none">
-              2025.04.03 ~ 2025.04.04 / Team 1 <br />
-              강하영, 구민지, 권유정, 박상윤, 주경록, 한상아
-            </div>
-          </div>
-        </div>
-    `;
-    return temp;
-  };
-
-  this.render = () => {
-    this.$target.innerHTML = this.template();
-
-    const info = document.querySelector(".info");
-    const tooltip = document.querySelector(".info div");
-
-    info.addEventListener("mouseover", () => {
-      tooltip.className = "";
-    });
-    info.addEventListener("mouseout", () => {
-      tooltip.className = "none";
-    });
-  
-  const renderDocumentTree = (documents) => {
+  this.renderDocumentTree = (documents) => {
     return documents.map(doc => `
       <li class="document">
         <a class="title" id="${doc.id}">${doc.title}<img class="add-icon" src="./images/icon_add.png"></a>
-        ${doc.documents && doc.documents.length > 0 ? `<ul class="sub">${renderDocumentTree(doc.documents)}</ul>` : ""}
+        ${doc.documents && doc.documents.length > 0 ? `<ul class="sub">${this.renderDocumentTree(doc.documents)}</ul>` : ""}
       </li>
     `).join("");
   };
-  
 
-  const renderDocuments = () => {
-    const documentList = $target.querySelector("ul");
+  this.renderDocuments = () => {
+    const documentList = this.$target.querySelector(".documents ul");
     if (!documentList) return;
-    documentList.innerHTML = renderDocumentTree(state);
+    documentList.innerHTML = this.renderDocumentTree(this.state);
   };
 
-  async function fetchDocuments() {
-    if (isFetched) return; 
-    isFetched = true; 
+  this.fetchDocuments = async () => {
+    if (this.isFetched) return;
+    this.isFetched = true;
 
     try {
       const documents = await getDocuments();
-      state = documents;
-      renderDocuments();
+      this.state = documents;
+      this.renderDocuments();
     } catch (error) {
       console.log("문서 목록을 불러오는 데 실패했습니다.", error);
     }
-  }
+  };
 
-  $target.addEventListener("click", (event) => {
-    if (event.target.classList.contains("title")) {
-      const onList = event.target.nextElementSibling;
-      if (onList) {
-        onList.classList.toggle("none");
-      }
-    }
 
-    if (event.target.classList.contains("add-icon")) {
-      const parentDocumentId = event.target.closest('.document').querySelector('.title').id;
-      createSubDocument(parentDocumentId); 
-    }
-  });
-
-  // 페이지 생성
-  const fetchData = async () => {
+  // 새페이지 생성
+  this.fetchData = async () => {
     try {
       const newDocumentData = await createDocument({
         title: "파일 제목",
         parent: null,
       });
-      state = [...state, newDocumentData];
-
-      const newDocument = document.createElement("li");
-      newDocument.classList.add("document");
-      const documentLink = document.createElement("a");
-      documentLink.classList.add("title");
-      documentLink.href = `./documents/${newDocumentData .id}`;
-      documentLink.textContent = newDocumentData.title;
-      newDocument.appendChild(documentLink);
-
-      const documentList = $target.querySelector("ul");
-      if (documentList) {
-        documentList.appendChild(newDocument);
-      }
-      renderDocuments();
+      this.state = [...this.state, newDocumentData];
+      this.renderDocuments();
     } catch (error) {
       console.error(error);
     }
   };
 
-  // 페이지 검색
-  const filter = () => {
-    const searchInput = document.querySelector(".search input");
-    const documentList = document.querySelector(".documents ul");
+  // 하위문서 생성
+  this.createSubDocument = async (parentDocumentId) => {
+    try {
+      const newDocumentData = await createDocument({
+        title: "하위 문서",
+        parent: parentDocumentId,  
+      });
+
+      const parentDocument = this.state.find(doc => doc.id === parseInt(parentDocumentId));
+      if (parentDocument) {
+        parentDocument.documents.push(newDocumentData);
+        this.renderDocuments();
+      }
+    } catch (error) {
+      console.error("하위 문서 생성 실패:", error);
+    }
+  };
+
+  // 검색기능 
+  this.filter = () => {
+    const searchInput = this.$target.querySelector(".search input");
+    const documentList = this.$target.querySelector(".documents ul");
 
     if (!documentList) return;
 
@@ -144,52 +117,64 @@ export default function Sidebar({ $app, initialState }) {
     });
   };
 
-  //하위문서 생성
-  const createSubDocument = async (parentDocumentId) => {
-    try {
-      const newDocumentData = await createDocument({
-        title: "하위 문서",
-        parent: parentDocumentId,  
-      });
-  
-      const parentDocument = state.find(doc => doc.id === parseInt(parentDocumentId));
-      if (parentDocument) {
-        parentDocument.documents.push(newDocumentData);
-        renderDocuments();
+  // 하위문서 토글
+  this.addEventListeners = () => {
+    const documentList = this.$target.querySelector(".documents ul");
+
+    documentList.addEventListener("click", (event) => {
+      if (event.target.classList.contains("title")) {
+        const onList = event.target.parentElement.querySelector(".sub");
+        if (onList) {
+          onList.classList.toggle("none");
+        }
       }
-      
-    } catch (error) {
-      console.error("하위 문서 생성 실패:", error);
-    }
-  };
-  
-  
 
-  const render = () => {
-    fetchDocuments();
+      if (event.target.classList.contains("add-icon")) {
+        const parentDocumentId = event.target.closest(".document").querySelector(".title").id;
+        this.createSubDocument(parentDocumentId);
+      }
+    });
 
-    const addPage = document.querySelector(".addPage");
-    const searchInput = document.querySelector(".search input");
+    const addPage = this.$target.querySelector(".addPage");
+    const searchInput = this.$target.querySelector(".search input");
 
     if (addPage) {
       addPage.addEventListener("click", async () => {
-        await fetchData();
+        await this.fetchData();
       });
     }
 
     if (searchInput) {
-      searchInput.addEventListener("input", filter);
+      searchInput.addEventListener("input", this.filter);
     }
-    infoTooltip();
+
+    const info = this.$target.querySelector(".info");
+    const tooltip = info?.querySelector("div");
+
+    if (info && tooltip) {
+      info.addEventListener("mouseover", () => {
+        tooltip.className = "";
+      });
+      info.addEventListener("mouseout", () => {
+        tooltip.className = "none";
+      });
+    }
   };
 
-  const setState = (newState) => {
-    state = newState;
-    renderDocuments();
+  this.setState = (newState) => {
+    this.state = newState;
+    this.renderDocuments();
   };
 
-  render();
-  
+  this.render = () => {
+    this.$target.innerHTML = this.template();
+    this.fetchDocuments();
+    this.addEventListeners();
+  };
 
-  return { setState };
+  this.render();
+
+  return {
+    setState: this.setState,
+  };
 }
