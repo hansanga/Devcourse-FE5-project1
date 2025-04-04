@@ -14,8 +14,7 @@ export default function Sidebar({ $app, initialState }) {
   const renderDocumentTree = (documents) => {
     return documents.map(doc => `
       <li class="document">
-        <a class="title" id="${doc.id}">${doc.title}</a>
-        <span class="add-icon"></span>
+        <a class="title" id="${doc.id}">${doc.title}<img class="add-icon" src="./images/icon_add.png"></a>
         ${doc.documents && doc.documents.length > 0 ? `<ul class="sub">${renderDocumentTree(doc.documents)}</ul>` : ""}
       </li>
     `).join("");
@@ -43,16 +42,15 @@ export default function Sidebar({ $app, initialState }) {
 
   $target.addEventListener("click", (event) => {
     if (event.target.classList.contains("title")) {
-      const onList = event.target.nextElementSibling?.nextElementSibling;
+      const onList = event.target.nextElementSibling;
       if (onList) {
         onList.classList.toggle("none");
       }
     }
 
     if (event.target.classList.contains("add-icon")) {
-      const parentDocumentId = event.target.previousElementSibling.id;
-      createSubDocument(parentDocumentId);
-      
+      const parentDocumentId = event.target.closest('.document').querySelector('.title').id;
+      createSubDocument(parentDocumentId); 
     }
   });
 
