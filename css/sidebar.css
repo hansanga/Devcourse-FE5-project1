@@ -1,4 +1,105 @@
+.modalBg {
+  z-index: 111;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff31;
+}
+
+.modal {
+  width: 600px;
+  height: 400px;
+  position: absolute;
+  background-color: #0c151c;
+  z-index: 1;
+  left: calc((100% - 600px) / 2);
+  top: calc((100% - 400px) / 2);
+  border-radius: 15px;
+  padding: 20px 40px;
+}
+
+.modal .user,
+.modal .theme {
+  height: 50%;
+}
+.modal .user .userTitle,
+.modal .theme .themeTitle {
+  padding-bottom: 10px;
+  border-bottom: 1px solid;
+}
+
+.modal .user .userContents {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.modal .user .userContents .profileImage {
+  display: grid;
+  justify-items: center;
+  grid-gap: 8px;
+}
+
+.modal .user .userContents .profileImage img {
+  border-radius: 100%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+.modal .user .userContents .profileImage img:hover {
+  background-color: #ffffff30;
+}
+
+.modal .user .userContents .profileImage button {
+  color: #2383e2;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.modal .user .userContents .profileName {
+  margin-left: 10px;
+  margin-bottom: 25px;
+}
+
+.modal .user .userContents .profileName div {
+  margin-bottom: 5px;
+}
+
+.modal .user .userContents .profileName input {
+  padding: 4px 10px;
+  background-color: #ffffff1c;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.modal .theme .themeContents {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  justify-content: space-between;
+}
+
+.modal .theme .themeContents div {
+  cursor: default;
+}
+
+.modal .theme .themeContents .subText {
+  opacity: 40%;
+}
+
+.modal .theme .themeContents .themeList {
+  list-style: none;
+  padding-left: 0px;
+  padding-right: 25px;
+  background: url("../images/icon_arrow-down-bold.png") right center / 16px 16px
+    no-repeat;
+  cursor: pointer;
+}
+
 .sideBar {
+
   position: fixed;
   width: 250px;
   height: 100%;
@@ -10,11 +111,17 @@
   padding: 15px;
   border-bottom: 1px solid;
   border-color: #0c151c;
+  justify-content: space-between;
 }
 
 .sideBar .header .profile {
   margin-left: 10px;
 }
+
+.sideBar .header .profile div {
+  cursor: default;
+}
+
 .sideBar .header .picture {
   width: 35px;
   height: 35px;
@@ -23,6 +130,14 @@
 
 .sideBar .header .profile .description {
   opacity: 0.6;
+}
+
+.sideBar .header .setting {
+  width: 24px;
+  height: 24px;
+  background: url("../images/icon_setting.png") right center / 24px 24px
+    no-repeat;
+  cursor: pointer;
 }
 
 .sideBar .search {
@@ -35,6 +150,10 @@
   background-color: transparent;
   border-style: none;
   margin-left: 29px;
+  box-shadow: rgba(255, 255, 255, 0.075) 0px 0px 0px 1px inset;
+  background: #ffffff1c;
+  border-radius: 6px;
+  padding: 4px 8px;
 }
 
 .sideBar .search ::placeholder {
@@ -42,30 +161,38 @@
 }
 
 .sideBar .documents {
-  height: 500px;
+  height: 480px;
   padding: 15px;
   border-top: 1px solid;
   border-color: #0c151c;
+  overflow: auto;
+  
 }
 
-.sideBar .documents .document {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat;
+.sideBar .documents ul {
+  list-style: none;
+  padding-left: 0px;
 }
 
 .sideBar .documents .sub {
-  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .sideBar .documents .document .title {
+  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat;
+  /* url("../images/icon_add.png") right center / 20px 20px no-repeat; */
+  padding-left: 25px;
   display: flex;
+  cursor: pointer;
+  margin-bottom: 5px;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-left: 25px;
-  background: url("../images/icon_add.png") right center / 20px 20px no-repeat;
+}
+
+.sideBar .documents .document .title img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 
 .sideBar .footer {
@@ -95,6 +222,7 @@
   width: 24px;
   height: 24px;
   background: url("../images/icon_help.png") center / cover;
+  cursor: pointer;
 }
 .info div {
   position: relative;

@@ -7,6 +7,36 @@
     <link rel="stylesheet" type="text/css" href="./css/style.css" />
   </head>
   <body>
+    <div class="modalBg none">
+      <div class="modal">
+          <div class="user">
+            <div class="userTitle">계정</div>
+            <div class="userContents">
+              <div class="profileImage">
+                  <img src="./images/profile.png">
+                  <button>사진 추가</button>
+              </div>
+              <div class="profileName">
+                  <div>선호하는 이름</div>
+                  <input type="text"></input>
+              </div>
+            </div>
+          </div>
+          <div class="theme">
+            <div class="themeTitle">기본설정</div>
+            <div class="themeContents">
+              <div>
+                  <div>테마</div>
+                  <div class="subText">내 기기에서 Notion의 모습을 마음껏 바꿔보세요.</div>
+              </div>
+              <ul class="themeList">
+                  <li>다크모드</li>
+                  <li class="none">라이트모드</li>
+              </ul>
+            </div>
+          </div>
+      </div>
+  </div>
     <div class="wrapper" id="app"></div>
     <script src="./src/index.js" type="module"></script>
   </body>
