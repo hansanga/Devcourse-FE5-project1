@@ -132,15 +132,15 @@ export default function Document({
       let block, li, checkbox, checkText;
       switch (type) {
         case "heading1":
-          block = document.createElement("h1");
+          block = document.createElement("h2");
           block.innerHTML = "제목1";
           break;
         case "heading2":
-          block = document.createElement("h2");
+          block = document.createElement("h3");
           block.innerHTML = "제목2";
           break;
         case "heading3":
-          block = document.createElement("h3");
+          block = document.createElement("h4");
           block.innerHTML = "제목3";
           break;
         case "list":
