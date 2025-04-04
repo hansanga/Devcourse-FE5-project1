@@ -111,10 +111,13 @@
   border-bottom: 1px solid;
   border-color: #0c151c;
   justify-content: space-between;
+  align-items: center;
 }
 
 .sideBar .header .profile {
   margin-left: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .sideBar .header .profile div {
@@ -125,16 +128,18 @@
   width: 35px;
   height: 35px;
   border-radius: 5px;
+  margin-right: 6px;
 }
 
 .sideBar .header .profile .description {
   opacity: 0.6;
+  font-size: 12px;
 }
 
 .sideBar .header .setting {
   width: 24px;
   height: 24px;
-  background: url("../images/icon_setting.png") right center / 24px 24px
+  background: url("../images/icon_setting.png") right center / 20px 20px
     no-repeat;
   cursor: pointer;
 }
