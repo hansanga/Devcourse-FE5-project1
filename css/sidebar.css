@@ -176,12 +176,19 @@
 }
 
 .sideBar .documents .document .title {
-  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat,
-    url("../images/icon_add.png") right center / 20px 20px no-repeat;
+  background: url("../images/icon_docs.png") left center / 20px 20px no-repeat;
+  /* url("../images/icon_add.png") right center / 20px 20px no-repeat; */
   padding-left: 25px;
   display: flex;
 
   margin-bottom: 5px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sideBar .documents .document .title img {
+  width: 20px;
+  height: 20px;
 }
 
 .sideBar .footer {
