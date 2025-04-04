@@ -160,10 +160,12 @@
 }
 
 .sideBar .documents {
-  height: 500px;
+  height: 480px;
   padding: 15px;
   border-top: 1px solid;
   border-color: #0c151c;
+  overflow: auto;
+  
 }
 
 .sideBar .documents ul {
@@ -180,7 +182,7 @@
   /* url("../images/icon_add.png") right center / 20px 20px no-repeat; */
   padding-left: 25px;
   display: flex;
-
+  cursor: pointer;
   margin-bottom: 5px;
   justify-content: space-between;
   align-items: center;
@@ -189,6 +191,7 @@
 .sideBar .documents .document .title img {
   width: 20px;
   height: 20px;
+  cursor: pointer;
 }
 
 .sideBar .footer {
