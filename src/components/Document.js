@@ -15,13 +15,39 @@ export default function Document({
 
   this.template = () => {
     let temp = `
+    ${
+      this.state.id
+        ? `
         <div class="header">
           <div class="pageTree">새 페이지 / 하위 페이지 1</div>
-          <button id="pageDelete"><span class="material-symbols-outlined">delete</span></button>
+          <button id="deletePage" class="deletePage"></button>
         </div>
-        <div class="content">
-          <h1 class="documentTitle" contenteditable="true" placeholder="새 페이지 제목을 입력해주세요."></h1>
-          <div class="documentContent" contenteditable="true" placeholder="내용을 입력해주세요."></div>
+        <div class="default">
+          <div class="content">`
+        : `<div class="default">
+          <div class="content center">`
+    }`;
+
+    if (this.state.id) {
+      temp += `
+          <h1 class="documentTitle" contenteditable="true" placeholder="새 페이지 제목을 입력해주세요.">${
+            this.state.title || ""
+          }</h1>
+          <button class="add-block-btn">+</button>
+          <div class="documentContentList">
+          ${
+            this.state.content ||
+            `<div class="documentContent" contenteditable="true" placeholder="내용을 입력해주세요."></div>`
+          }
+          </div>
+        </div>
+        <div class="docs none">
+          <div class="header">
+            <span class="pageTree"></span>
+            <button class="deletePage"></button>
+          </div>
+          <div class="content"></div>
+        </div>
         </div>
         <div id="block-menu" class="hidden">
           <div data-type="text">텍스트</div>
@@ -31,25 +57,60 @@ export default function Document({
           <div data-type="list">글머리 기호 목록</div>
           <div data-type="numberList">숫자 목록</div>
           <div data-type="checkList">체크박스 목록</div>
-          <div data-type="horizontalRule">구분선</div>
-          <div data-type="pageLink">페이지 링크</div>
+          <div data-type="horizontalRule" disabled>구분선</div>
+          <div data-type="pageLink" disabled>페이지 링크</div>
         </div>
-    `;
+          `;
+    } else {
+      temp += `
+        <h3>
+          선택된 페이지가 없습니다.<br />
+          왼쪽 페이지 추가 버튼 또는 생성된 페이지를 눌러 페이지를 선택해주세요.
+        </h3>
+      `;
+    }
     return temp;
   };
 
   this.render = () => {
     this.$target.innerHTML = this.template();
 
-    this.$target.querySelector("#pageDelete").addEventListener("click", (e) => {
+    if (!this.state.id) return;
+
+    // 페이지 삭제
+    this.$target.querySelector("#deletePage").addEventListener("click", (e) => {
       e.preventDefault();
-      this.handleDelete(); // id 값 추가
+      this.handleDelete(this.state.id);
     });
 
+    // 필요한 데이터 선언
     const content = this.$target.querySelector(".content");
+    const contentList = this.$target.querySelector(".documentContentList");
     const title = this.$target.querySelector(".documentTitle");
     const blockMenu = this.$target.querySelector("#block-menu");
+    const addBlockBtn = this.$target.querySelector(".add-block-btn");
+
+    // 템플릿 추가 버튼 클릭시 이벤트
+    addBlockBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      blockMenu.style.top = `${e.clientY}px`;
+      blockMenu.style.left = `${e.clientX}px`;
+      if (blockMenu.classList.contains("hidden")) {
+        blockMenu.classList.remove("hidden");
+      } else {
+        blockMenu.classList.add("hidden");
+      }
+    });
+
+    // 템플릿 추가 버튼 클릭시 아무런 행동 없이 밖의 영역 클릭시 메뉴 닫기
+    content.addEventListener("click", (e) => {
+      e.preventDefault();
+      blockMenu.classList.add("hidden");
+    });
+
+    // 초기 포커스
     title.focus();
+    // 한글 등 조합 여부
     let isComposing = false;
 
     // 한글 등 조합 시작될 때
@@ -62,9 +123,11 @@ export default function Document({
       isComposing = false;
     });
 
+    // 템플릿 추가
     blockMenu.addEventListener("click", (e) => {
       const type = e.target.dataset.type;
       if (!type) return;
+      if (type === "horizontalRule" || type === "pageLink") return;
 
       let block, li, checkbox, checkText;
       switch (type) {
@@ -132,14 +195,14 @@ export default function Document({
       )
         block.contentEditable = true;
 
-      content.appendChild(block);
-      if (type === "horizontalRule") {
-        block.style.border = "none";
-      } else if (type === "checkList") {
+      contentList.appendChild(block);
+      if (type === "checkList") {
         checkText.focus();
       } else focusAtEnd(block);
+      blockMenu.classList.add("hidden");
     });
 
+    // 제목에서 enter 누르면 다음 항목으로 이동
     title.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -151,27 +214,28 @@ export default function Document({
         }
       }
     });
+
+    // 제목 수정 시 저장
     title.addEventListener("input", (e) => {
       e.preventDefault();
       if (e.target.innerText.trim() === "") {
         e.target.textContent = "";
         return;
       }
-      this.handleSave({
-        title: e.target.innerText,
-      });
+      this.handleSave(e.target.innerText, null);
     });
 
+    // 내용 수정 시 저장
     content.addEventListener("input", (e) => {
       const target = e.target;
       if (target.classList.contains("documentContent")) {
         e.preventDefault();
-        this.handleSave({
-          title: target.innerText,
-        });
+        const contentList = content.querySelector(".documentContentList");
+        this.handleSave(null, contentList.innerHTML);
       }
     });
 
+    // 내용 수정 시 각 키에 따른 이벤트
     content.addEventListener("keydown", (e) => {
       const target = e.target;
       // 방향키 위 아래 처리
@@ -261,7 +325,7 @@ export default function Document({
           newCheck.appendChild(newCheckbox);
           newCheck.appendChild(newText);
 
-          target.parentElement.appendChild(newCheck);
+          contentList.appendChild(newCheck);
           focusAtEnd(newText);
         }
         return;
@@ -280,6 +344,7 @@ export default function Document({
     });
   };
 
+  // 포커스 이동시 텍스트의 맨 끝으로 이동을 위한 함수
   function focusAtEnd(element) {
     element.focus();
 
@@ -287,7 +352,7 @@ export default function Document({
     const range = document.createRange();
     const selection = window.getSelection();
 
-    // 만약 텍스트 노드가 없다면 dummy로 하나 넣기
+    // 만약 텍스트 노드가 없다면 dummy로 하나 추가
     if (!element.firstChild) {
       element.appendChild(document.createTextNode(""));
     }
@@ -299,6 +364,7 @@ export default function Document({
     selection.addRange(range);
   }
 
+  // 블록에서 Enter 클릭시 처리할 함수
   const handleEnter = (currentElement) => {
     const tag = currentElement.tagName;
     // 리스트(li) 내부에서 Enter
@@ -307,7 +373,7 @@ export default function Document({
 
       if (!parentList) return;
 
-      // 1. 빈 li일 경우 → 리스트 탈출
+      // 빈 li일 경우 리스트 탈출
       if (currentElement.innerText.trim() === "") {
         const newBlock = document.createElement("div");
         newBlock.className = "documentContent";
@@ -320,7 +386,7 @@ export default function Document({
         return;
       }
 
-      // 2. 일반 li일 경우 → 새로운 li 추가
+      // 일반 li일 경우 새로운 li 추가
       const newLi = document.createElement("li");
       newLi.className = "documentContent";
       newLi.contentEditable = true;
