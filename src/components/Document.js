@@ -1,3 +1,12 @@
+// src/components/Document.js
+import { getDocument, getDocuments, updateDocument } from "../api.js";
+
+const getDocumentIdFromHash = () => {
+  const hash = window.location.hash;
+  const matches = hash.match(/\/documents\/(\d+)/);
+  return matches ? matches[1] : null;
+};
+
 export default function Document({
   $app,
   initialState,
@@ -13,13 +22,56 @@ export default function Document({
   this.$target.className = "editor";
   $app.appendChild(this.$target);
 
+  const buildPath = (documents, targetId) => {
+    const path = [];
+
+    const findPath = (list, id) => {
+      for (const doc of list) {
+        if (doc.id === id) {
+          path.unshift(doc.title || "제목 없음");
+          return true;
+        }
+        if (doc.documents?.length && findPath(doc.documents, id)) {
+          path.unshift(doc.title || "제목 없음");
+          return true;
+        }
+      }
+      return false;
+    };
+
+    findPath(documents, targetId);
+    return path.join(" / ");
+  };
+
+  const renderChildren = (children) => {
+    if (!children || children.length === 0) return "";
+    return `
+      <div class="childDocs">
+        <h4>하위 페이지</h4>
+        <ul>
+          ${children
+            .map(
+              (child) => `
+                <li>
+                  <a href="#/documents/${child.id}">
+                    📄 ${child.title || "제목 없음"}
+                  </a>
+                </li>
+              `
+            )
+            .join("")}
+        </ul>
+      </div>
+    `;
+  };
+
   this.template = () => {
     let temp = `
     ${
       this.state.id
         ? `
         <div class="header">
-          <div class="pageTree">새 페이지 / 하위 페이지 1</div>
+          <div class="pageTree">경로 로딩 중...</div>
           <button id="deletePage" class="deletePage"></button>
         </div>
         <div class="default">
@@ -60,7 +112,8 @@ export default function Document({
           <div data-type="horizontalRule" disabled>구분선</div>
           <div data-type="pageLink" disabled>페이지 링크</div>
         </div>
-          `;
+        <div class="children"></div>
+      `;
     } else {
       temp += `
         <h3>
@@ -72,64 +125,69 @@ export default function Document({
     return temp;
   };
 
-  this.render = () => {
+  this.render = async () => {
     this.$target.innerHTML = this.template();
 
     if (!this.state.id) return;
 
-    // 페이지 삭제
-    this.$target.querySelector("#deletePage").addEventListener("click", (e) => {
-      e.preventDefault();
-      this.handleDelete(this.state.id);
-    });
+    const $pageTree = this.$target.querySelector(".pageTree");
+    const $children = this.$target.querySelector(".children");
 
-    // 필요한 데이터 선언
+    try {
+      const allDocs = await getDocuments();
+      const path = buildPath(allDocs, this.state.id);
+      if ($pageTree) $pageTree.textContent = path;
+      if (this.state.documents?.length) {
+        $children.innerHTML = renderChildren(this.state.documents);
+      }
+    } catch (e) {
+      console.error("경로/하위 문서 로딩 실패", e);
+    }
+
+    // 기존 렌더 로직 호출
+    this._renderEditor();
+  };
+
+  this._renderEditor = () => {
     const content = this.$target.querySelector(".content");
     const contentList = this.$target.querySelector(".documentContentList");
     const title = this.$target.querySelector(".documentTitle");
     const blockMenu = this.$target.querySelector("#block-menu");
     const addBlockBtn = this.$target.querySelector(".add-block-btn");
 
-    // 템플릿 추가 버튼 클릭시 이벤트
+    if (!content || !title || !addBlockBtn || !blockMenu || !contentList) return;
+
+    this.$target.querySelector("#deletePage")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.handleDelete(this.state.id);
+    });
+
     addBlockBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       blockMenu.style.top = `${e.clientY}px`;
       blockMenu.style.left = `${e.clientX}px`;
-      if (blockMenu.classList.contains("hidden")) {
-        blockMenu.classList.remove("hidden");
-      } else {
-        blockMenu.classList.add("hidden");
-      }
+      blockMenu.classList.toggle("hidden");
     });
 
-    // 템플릿 추가 버튼 클릭시 아무런 행동 없이 밖의 영역 클릭시 메뉴 닫기
-    content.addEventListener("click", (e) => {
-      e.preventDefault();
+    content.addEventListener("click", () => {
       blockMenu.classList.add("hidden");
     });
 
-    // 초기 포커스
     title.focus();
-    // 한글 등 조합 여부
     let isComposing = false;
 
-    // 한글 등 조합 시작될 때
     content.addEventListener("compositionstart", () => {
       isComposing = true;
     });
-
-    // 조합 끝날 때
     content.addEventListener("compositionend", () => {
       isComposing = false;
     });
 
-    // 템플릿 추가
     blockMenu.addEventListener("click", (e) => {
       const type = e.target.dataset.type;
-      if (!type) return;
-      if (type === "horizontalRule" || type === "pageLink") return;
+      if (!type || type === "horizontalRule" || type === "pageLink") return;
+      let block = document.createElement("div");
 
-      let block, li, checkbox, checkText;
       switch (type) {
         case "heading1":
           block = document.createElement("h2");
@@ -145,266 +203,71 @@ export default function Document({
           break;
         case "list":
           block = document.createElement("ul");
-          li = document.createElement("li");
+          const li = document.createElement("li");
           li.className = "documentContent";
           li.contentEditable = true;
           li.textContent = "리스트";
-
           block.appendChild(li);
           break;
         case "numberList":
           block = document.createElement("ol");
-          li = document.createElement("li");
-          li.className = "documentContent";
-          li.contentEditable = true;
-          li.textContent = "리스트";
-          block.appendChild(li);
+          const numLi = document.createElement("li");
+          numLi.className = "documentContent";
+          numLi.contentEditable = true;
+          numLi.textContent = "리스트";
+          block.appendChild(numLi);
           break;
         case "checkList":
           block = document.createElement("div");
           block.className = "checkListItem";
-
-          checkbox = document.createElement("input");
+          const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
-
-          checkText = document.createElement("div");
+          const checkText = document.createElement("div");
           checkText.className = "documentContent";
           checkText.contentEditable = true;
-
           block.appendChild(checkbox);
           block.appendChild(checkText);
           break;
-        case "horizontalRule":
-          block = document.createElement("hr");
-          break;
-        case "pageLink":
-          block = document.createElement("a");
-          block.href = "#";
-          block.textContent = "페이지 링크";
-          break;
         default:
-          block = document.createElement("div");
-          break;
+          block.className = "documentContent";
+          block.contentEditable = true;
+          block.textContent = "";
       }
-      block.classList.add("documentContent");
-      if (
-        !li &&
-        type !== "checkList" &&
-        type !== "pageLink" &&
-        type !== "horizontalRule"
-      )
-        block.contentEditable = true;
 
       contentList.appendChild(block);
-      if (type === "checkList") {
-        checkText.focus();
-      } else focusAtEnd(block);
+      focusAtEnd(block);
       blockMenu.classList.add("hidden");
     });
 
-    // 제목에서 enter 누르면 다음 항목으로 이동
     title.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        const nextTarget = document.querySelector(".documentContent");
-        if (nextTarget) {
-          focusAtEnd(nextTarget);
-        } else if (!isComposing) {
-          handleEnter(title);
-        }
+        const next = document.querySelector(".documentContent");
+        if (next) focusAtEnd(next);
       }
     });
 
-    // 제목 수정 시 저장
     title.addEventListener("input", (e) => {
-      e.preventDefault();
-      if (e.target.innerText.trim() === "") {
-        e.target.textContent = "";
-        return;
-      }
       this.handleSave(e.target.innerText, null);
     });
 
-    // 내용 수정 시 저장
     content.addEventListener("input", (e) => {
       const target = e.target;
       if (target.classList.contains("documentContent")) {
-        e.preventDefault();
         const contentList = content.querySelector(".documentContentList");
         this.handleSave(null, contentList.innerHTML);
       }
     });
-
-    // 내용 수정 시 각 키에 따른 이벤트
-    content.addEventListener("keydown", (e) => {
-      const target = e.target;
-      // 방향키 위 아래 처리
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        const prev = target.previousElementSibling;
-        if (prev) {
-          focusAtEnd(prev);
-        } else focusAtEnd(title);
-        return;
-      }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        const next = target.nextElementSibling;
-        if (next) {
-          focusAtEnd(next);
-        } else focusAtEnd(title);
-        return;
-      }
-
-      // 체크박스 블록에서 Backspace 처리
-      if (
-        target.classList.contains("documentContent") &&
-        target.parentElement.classList.contains("checkListItem") &&
-        target.innerText.trim() === "" &&
-        e.key === "Backspace"
-      ) {
-        e.preventDefault();
-        const wrapper = target.parentElement;
-        const prev =
-          wrapper.previousElementSibling?.querySelector(".documentContent") ||
-          title;
-        wrapper.remove();
-        focusAtEnd(prev);
-        return;
-      }
-
-      // 일반 블록에서 Backspace 처리
-      if (
-        target.classList.contains("documentContent") &&
-        !target.parentElement.classList.contains("checkListItem") &&
-        target.innerText.trim() === "" &&
-        e.key === "Backspace"
-      ) {
-        e.preventDefault();
-        const prevTarget = target.previousElementSibling;
-        target.remove();
-        if (prevTarget?.classList?.contains("documentContent")) {
-          focusAtEnd(prevTarget);
-        } else {
-          focusAtEnd(title);
-        }
-        return;
-      }
-
-      // 체크박스에서 Enter 줄 추가 or 종료
-      if (
-        target.classList.contains("documentContent") &&
-        target.parentElement.classList.contains("checkListItem") &&
-        e.key === "Enter" &&
-        !isComposing &&
-        !e.shiftKey
-      ) {
-        e.preventDefault();
-
-        if (target.innerText.trim() === "") {
-          const newDiv = document.createElement("div");
-          newDiv.className = "documentContent";
-          newDiv.contentEditable = true;
-          newDiv.setAttribute("data-placeholder", "내용을 입력해주세요.");
-
-          target.parentElement.remove();
-          content.appendChild(newDiv);
-
-          focusAtEnd(newDiv);
-        } else {
-          const newCheck = document.createElement("div");
-          newCheck.className = "checkListItem documentContent";
-
-          const newCheckbox = document.createElement("input");
-          newCheckbox.type = "checkbox";
-
-          const newText = document.createElement("div");
-          newText.className = "documentContent";
-          newText.contentEditable = true;
-
-          newCheck.appendChild(newCheckbox);
-          newCheck.appendChild(newText);
-
-          contentList.appendChild(newCheck);
-          focusAtEnd(newText);
-        }
-        return;
-      }
-
-      // 일반 블록에서 Enter 처리
-      if (
-        target.classList.contains("documentContent") &&
-        e.key === "Enter" &&
-        !isComposing &&
-        !e.shiftKey
-      ) {
-        e.preventDefault();
-        handleEnter(target);
-      }
-    });
   };
 
-  // 포커스 이동시 텍스트의 맨 끝으로 이동을 위한 함수
-  function focusAtEnd(element) {
-    element.focus();
-
-    // 텍스트 노드가 있는지 확인
+  const focusAtEnd = (el) => {
+    el.focus();
     const range = document.createRange();
-    const selection = window.getSelection();
-
-    // 만약 텍스트 노드가 없다면 dummy로 하나 추가
-    if (!element.firstChild) {
-      element.appendChild(document.createTextNode(""));
-    }
-
-    range.setStart(element.firstChild, element.firstChild.length); // 텍스트 끝으로
-    range.collapse(true);
-
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-
-  // 블록에서 Enter 클릭시 처리할 함수
-  const handleEnter = (currentElement) => {
-    const tag = currentElement.tagName;
-    // 리스트(li) 내부에서 Enter
-    if (tag === "LI") {
-      const parentList = currentElement.closest("ul, ol");
-
-      if (!parentList) return;
-
-      // 빈 li일 경우 리스트 탈출
-      if (currentElement.innerText.trim() === "") {
-        const newBlock = document.createElement("div");
-        newBlock.className = "documentContent";
-        newBlock.contentEditable = true;
-        newBlock.setAttribute("data-placeholder", "내용을 입력해주세요.");
-
-        parentList.insertAdjacentElement("afterend", newBlock);
-        currentElement.remove(); // 빈 li 제거
-        focusAtEnd(newBlock);
-        return;
-      }
-
-      // 일반 li일 경우 새로운 li 추가
-      const newLi = document.createElement("li");
-      newLi.className = "documentContent";
-      newLi.contentEditable = true;
-      newLi.textContent = "";
-
-      currentElement.insertAdjacentElement("afterend", newLi);
-      focusAtEnd(newLi);
-      return;
-    }
-
-    const newElement = document.createElement("div");
-    newElement.className = "documentContent";
-    newElement.contentEditable = "true";
-    newElement.placeholder = "내용을 입력해주세요.";
-
-    // 현재 요소 다음에 insert
-    currentElement.insertAdjacentElement("afterend", newElement);
-    newElement.focus();
+    const sel = window.getSelection();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
   };
 
   this.setState = (newState) => {
